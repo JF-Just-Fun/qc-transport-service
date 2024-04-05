@@ -35,7 +35,7 @@ class User : public drogon::HttpController<User>
 public:
   METHOD_LIST_BEGIN
   // METHOD_ADD宏会在路径映射中自动把名字空间和类名作为路径的前缀
-  ADD_METHOD_TO(User::login, "/user/login", Post);     // path is /usr/login
+  ADD_METHOD_TO(User::login, "/user/login", Post, "SessionFilter");     // path is /usr/login
   ADD_METHOD_TO(User::getInfo, "/user/info/{1}", Get); // path is /usr/info/{userId}
   ADD_METHOD_TO(User::registry, "/user/registry", Post);
   METHOD_LIST_END
