@@ -1,5 +1,8 @@
 #include <drogon/HttpController.h>
 #include <drogon/HttpRequest.h>
+#include <drogon/orm/DbClient.h>
+#include "../models/User.h"
+#include <drogon/orm/Mapper.h>
 
 using namespace drogon;
 
@@ -35,8 +38,8 @@ class User : public drogon::HttpController<User>
 public:
   METHOD_LIST_BEGIN
   // METHOD_ADD宏会在路径映射中自动把名字空间和类名作为路径的前缀
-  ADD_METHOD_TO(User::login, "/user/login", Post, "SessionFilter");     // path is /usr/login
-  ADD_METHOD_TO(User::getInfo, "/user/info/{1}", Get); // path is /usr/info/{userId}
+  ADD_METHOD_TO(User::login, "/user/login", Post, "SessionFilter"); // path is /usr/login
+  ADD_METHOD_TO(User::getInfo, "/user/info/{1}", Get);              // path is /usr/info/{userId}
   ADD_METHOD_TO(User::registry, "/user/registry", Post);
   METHOD_LIST_END
 
@@ -91,6 +94,32 @@ public:
     ret["password"] = NewUser.password;
     ret["gender"] = NewUser.gender;
     ret["telephone"] = NewUser.telephone;
+
+    drogon_model::QC_SERVER_DB::User user;
+    user.setName(NewUser.name);
+    user.setPassword(NewUser.password);
+    user.setPhone(NewUser.telephone);
+    user.setGender(NewUser.gender);
+
+    try
+    {
+      auto clientPtr = drogon::app().getDbClient();
+      drogon::orm::Mapper<drogon_model::QC_SERVER_DB::User> mp(clientPtr);
+      // std::vector<Admin> uu = mp.orderBy(Admin::Cols::_id).limit(25).offset(0).findAll();
+
+      auto iii = mp.count();
+      std::cout << iii << " rows 111111111111111!" << std::endl;
+
+      mp.insert(user);
+
+      auto uu = mp.orderBy(drogon_model::QC_SERVER_DB::User::Cols::_id).limit(5).offset(5).findAll();
+      std::cout << uu.size() << " rows 2222222222222222!" << std::endl;
+    }
+    catch (const drogon::orm::DrogonDbException &e)
+    {
+      std::cout << "error:" << e.base().what() << std::endl;
+    }
+
     auto resp = HttpResponse::newHttpJsonResponse(ret);
 
     callback(resp);

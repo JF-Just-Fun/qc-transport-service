@@ -1,20 +1,20 @@
 {
     //rdbms: server type, postgresql,mysql or sqlite3
-    "rdbms": "mysql",
+    // "rdbms": "mysql",
     //filename: sqlite3 db file name
     //"filename":"",
     //host: server address,localhost by default;
-    "host": "127.0.0.1",
+    // "host": "127.0.0.1",
     //port: server port, 5432 by default;
-    "port": 13306,
+    // "port": 13306,
     //dbname: Database name;
-    "dbname": "QC_SERVER_DB",
+    // "dbname": "QC_SERVER_DB",
     //schema: valid for postgreSQL, "public" by default;
-    "schema": "public",
+    // "schema": "public",
     //user: User name
-    "user": "root",
+    // "user": "root",
     //password or passwd: Password
-    "password": "1234",
+    // "password": "1234",
     //client_encoding: The character set used by drogon_ctl. it is empty string by default which
     //means use the default character set.
     //"client_encoding": "",
