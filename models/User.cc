@@ -8,6 +8,8 @@
 #include "User.h"
 #include "Role.h"
 #include <drogon/utils/Utilities.h>
+#include "../utils/DatabaseTools.h"
+#include "../utils/DatabaseTools.h"
 #include <string>
 
 using namespace drogon;
@@ -29,7 +31,7 @@ const std::string User::tableName = "user";
 
 const std::vector<typename User::MetaData> User::metaData_={
 {"id","int32_t","int",4,1,1,1},
-{"create_time","::trantor::Date","datetime",0,0,0,0},
+{"create_time","::trantor::Date","timestamp",0,0,0,0},
 {"uid","std::string","char(12)",0,0,0,0},
 {"name","std::string","varchar(16)",16,0,0,0},
 {"gender","int8_t","tinyint(1)",1,0,0,0},
@@ -88,6 +90,7 @@ User::User(const Row &r, const ssize_t indexOffset) noexcept
         if(!r["password"].isNull())
         {
             password_=std::make_shared<std::string>(r["password"].as<std::string>());
+            DatabaseTools::decrypt(password_);
         }
         if(!r["email"].isNull())
         {
@@ -158,6 +161,7 @@ User::User(const Row &r, const ssize_t indexOffset) noexcept
         if(!r[index].isNull())
         {
             password_=std::make_shared<std::string>(r[index].as<std::string>());
+            DatabaseTools::decrypt(password_);
         }
         index = offset + 6;
         if(!r[index].isNull())
@@ -216,6 +220,7 @@ User::User(const Json::Value &pJson, const std::vector<std::string> &pMasqueradi
                     decimalNum = (size_t)atol(decimals.c_str());
                 }
                 createTime_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
+            DatabaseTools::updateTime(createTime_);
             }
         }
     }
@@ -249,6 +254,7 @@ User::User(const Json::Value &pJson, const std::vector<std::string> &pMasqueradi
         if(!pJson[pMasqueradingVector[5]].isNull())
         {
             password_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
+            DatabaseTools::encrypt(password_);
         }
     }
     if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
@@ -310,6 +316,7 @@ User::User(const Json::Value &pJson) noexcept(false)
                     decimalNum = (size_t)atol(decimals.c_str());
                 }
                 createTime_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
+            DatabaseTools::updateTime(createTime_);
             }
         }
     }
@@ -343,6 +350,7 @@ User::User(const Json::Value &pJson) noexcept(false)
         if(!pJson["password"].isNull())
         {
             password_=std::make_shared<std::string>(pJson["password"].asString());
+            DatabaseTools::encrypt(password_);
         }
     }
     if(pJson.isMember("email"))
@@ -409,6 +417,7 @@ void User::updateByMasqueradedJson(const Json::Value &pJson,
                     decimalNum = (size_t)atol(decimals.c_str());
                 }
                 createTime_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
+            DatabaseTools::updateTime(createTime_);
             }
         }
     }
@@ -442,6 +451,7 @@ void User::updateByMasqueradedJson(const Json::Value &pJson,
         if(!pJson[pMasqueradingVector[5]].isNull())
         {
             password_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
+            DatabaseTools::encrypt(password_);
         }
     }
     if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
@@ -502,6 +512,7 @@ void User::updateByJson(const Json::Value &pJson) noexcept(false)
                     decimalNum = (size_t)atol(decimals.c_str());
                 }
                 createTime_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
+            DatabaseTools::updateTime(createTime_);
             }
         }
     }
@@ -535,6 +546,7 @@ void User::updateByJson(const Json::Value &pJson) noexcept(false)
         if(!pJson["password"].isNull())
         {
             password_=std::make_shared<std::string>(pJson["password"].asString());
+            DatabaseTools::encrypt(password_);
         }
     }
     if(pJson.isMember("email"))

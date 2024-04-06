@@ -256,10 +256,11 @@ class User
         needSelection = false;
             sql += "id,";
             ++parametersCount;
-        if(dirtyFlag_[1])
+        sql += "create_time,";
+        ++parametersCount;
+        if(!dirtyFlag_[1])
         {
-            sql += "create_time,";
-            ++parametersCount;
+            needSelection=true;
         }
         if(dirtyFlag_[2])
         {
@@ -312,6 +313,10 @@ class User
         {
             sql.append("?,");
 
+        }
+        else
+        {
+            sql +="default,";
         }
         if(dirtyFlag_[2])
         {

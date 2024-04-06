@@ -26,7 +26,7 @@ const std::string Role::tableName = "role";
 
 const std::vector<typename Role::MetaData> Role::metaData_={
 {"id","int32_t","int",4,1,1,1},
-{"create_time","::trantor::Date","datetime",0,0,0,0},
+{"create_time","::trantor::Date","timestamp",0,0,0,0},
 {"uid","std::string","char(12)",0,0,0,0},
 {"name","std::string","varchar(16)",16,0,0,0},
 {"description","std::string","text",0,0,0,0},

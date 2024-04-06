@@ -3,6 +3,8 @@
 #include <drogon/orm/DbClient.h>
 #include "../models/User.h"
 #include <drogon/orm/Mapper.h>
+#include "../utils/DatabaseTools.h"
+#include <drogon/orm/Criteria.h>
 
 using namespace drogon;
 
@@ -75,13 +77,42 @@ public:
                std::function<void(const HttpResponsePtr &)> &&callback,
                const std::string &token) const
   {
-    LOG_DEBUG << "User token:" << token << " get his information";
-
     // 验证token有效性等
     // 读数据库或缓存获取用户信息
     Json::Value ret;
-    ret["result"] = "ok";
-    ret["token"] = token;
+
+    try
+    {
+
+      auto clientPtr = drogon::app().getDbClient();
+      drogon::orm::Mapper<drogon_model::QC_SERVER_DB::User> mp(clientPtr);
+
+      auto u = mp.findOne(drogon::orm::Criteria(drogon_model::QC_SERVER_DB::User::Cols::_uid, drogon::orm::CompareOperator::EQ, token));
+
+      if (*u.getValidate())
+      {
+        ret["result"] = "ok";
+        ret["name"] = *u.getName();
+        ret["id"] = *u.getUid();
+        ret["gender"] = *u.getGender();
+        ret["phone"] = *u.getPhone();
+        // ret["email"] = *u.getEmail();
+        std::cout << "u validate: " << *u.getName() << std::endl;
+      }
+      else
+      {
+        ret["result"] = "error";
+        ret["message"] = "user was invalidated";
+        std::cout << "error, no data" << std::endl;
+      }
+    }
+    catch (const drogon::orm::DrogonDbException &e)
+    {
+      ret["result"] = "error";
+      ret["message"] = "no user!";
+      std::cout << "error:" << e.base().what() << std::endl;
+    }
+
     auto resp = HttpResponse::newHttpJsonResponse(ret);
     callback(resp);
   }
@@ -90,16 +121,14 @@ public:
                 std::function<void(const HttpResponsePtr &)> &&callback) const
   {
     Json::Value ret;
-    ret["name"] = NewUser.name;
-    ret["password"] = NewUser.password;
-    ret["gender"] = NewUser.gender;
-    ret["telephone"] = NewUser.telephone;
-
     drogon_model::QC_SERVER_DB::User user;
+
+    const std::string uid = DatabaseTools::generateUid();
     user.setName(NewUser.name);
     user.setPassword(NewUser.password);
     user.setPhone(NewUser.telephone);
     user.setGender(NewUser.gender);
+    user.setUid(uid);
 
     try
     {
@@ -107,13 +136,33 @@ public:
       drogon::orm::Mapper<drogon_model::QC_SERVER_DB::User> mp(clientPtr);
       // std::vector<Admin> uu = mp.orderBy(Admin::Cols::_id).limit(25).offset(0).findAll();
 
-      auto iii = mp.count();
-      std::cout << iii << " rows 111111111111111!" << std::endl;
+      auto s = mp.count();
+      std::cout << " there are rows " << s << "!" << std::endl;
 
       mp.insert(user);
 
-      auto uu = mp.orderBy(drogon_model::QC_SERVER_DB::User::Cols::_id).limit(5).offset(5).findAll();
-      std::cout << uu.size() << " rows 2222222222222222!" << std::endl;
+      auto u = mp.findOne(drogon::orm::Criteria(drogon_model::QC_SERVER_DB::User::Cols::_uid, drogon::orm::CompareOperator::EQ, uid));
+
+      if (*u.getValidate())
+      {
+        std::cout << "u validate: " << *u.getValidate() << std::endl;
+      }
+      else
+      {
+        std::cout << "error, no data" << std::endl;
+      }
+
+      // if (u.getValidate())
+      // {
+      //   ret["id"] = *(u.getUid());
+      //   ret["name"] = *(u.getName());
+      //   ret["email"] = *(u.getEmail());
+      //   ret["gender"] = *(u.getGender());
+      //   ret["phone"] = *(u.getPhone());
+      //   ret["validate"] = *(u.getValidate());
+      // } else {
+      //   std::cout << "error, no data" << std::endl;
+      // }
     }
     catch (const drogon::orm::DrogonDbException &e)
     {
