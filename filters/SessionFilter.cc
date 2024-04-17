@@ -1,6 +1,7 @@
 #include <trantor/utils/Date.h>
 #include <trantor/utils/Logger.h>
 #include <drogon/HttpFilter.h>
+#include "../helper/StatusCode.h"
 #define VDate "visitDate"
 
 using namespace drogon;
@@ -10,7 +11,7 @@ class SessionFilter : public HttpFilter<SessionFilter>
 public:
   SessionFilter()
   {
-    std::cout << "SessionFilter" << std::endl;
+    std::cout << "SessionFilter Constructor" << std::endl;
   }
 
   void doFilter(const HttpRequestPtr &req,
@@ -19,6 +20,7 @@ public:
   {
     trantor::Date now = trantor::Date::date();
     LOG_TRACE << "";
+
     if (req->session()->find(VDate))
     {
       auto lastDate = req->session()->get<trantor::Date>(VDate);
@@ -38,7 +40,7 @@ public:
       else
       {
         Json::Value json;
-        json["result"] = "error";
+        json["code"] = StatusCode::TOO_FREQUENTLY;
         json["message"] = "Access interval should be at least 10 seconds";
         auto res = HttpResponse::newHttpJsonResponse(json);
         cb(res);

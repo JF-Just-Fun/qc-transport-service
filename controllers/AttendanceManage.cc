@@ -53,8 +53,8 @@ class AttendanceManage : public drogon::HttpController<AttendanceManage>
 public:
   METHOD_LIST_BEGIN
   // METHOD_ADD宏会在路径映射中自动把名字空间和类名作为路径的前缀
-  ADD_METHOD_TO(AttendanceManage::updateAttendance, "/attendance/{1:userId}", Put, "UserValidator");
-  ADD_METHOD_TO(AttendanceManage::getAttendanceInfo, "/attendance/{1:userId}", Get, "UserValidator");
+  ADD_METHOD_TO(AttendanceManage::updateAttendance, "/attendance/{1:userId}", Put, "UserFilter");
+  ADD_METHOD_TO(AttendanceManage::getAttendanceInfo, "/attendance/{1:userId}", Get, "UserFilter");
   METHOD_LIST_END
 
   // 更新指定用户的考勤信息

@@ -3,11 +3,11 @@ CREATE TABLE user(
     id int NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT 'Primary Key',
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Create Time',
     uid CHAR(12) UNIQUE,
-    name VARCHAR(16),
+    name VARCHAR(16) UNIQUE,
     gender BOOLEAN DEFAULT 0,
     password VARCHAR(16),
     email VARCHAR(255),
-    phone VARCHAR(11),
+    phone VARCHAR(11) UNIQUE,
     validate BOOLEAN DEFAULT 1
 ) COMMENT 'system user';
 

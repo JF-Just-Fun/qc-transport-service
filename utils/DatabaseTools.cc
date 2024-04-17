@@ -28,6 +28,7 @@ namespace DatabaseTools
     t = std::make_shared<std::string>(_encryptAndDecrypt(*t));
     std::cout << "Encrypting after..." << *t << std::endl;
   }
+
   std::string generateUid(const int len)
   {
     static const char alphanum[] =
@@ -45,8 +46,6 @@ namespace DatabaseTools
     {
       uid += alphanum[dis(gen)];
     }
-
-    std::cout << "Generated UID: " << uid << std::endl;
 
     return uid;
   }
