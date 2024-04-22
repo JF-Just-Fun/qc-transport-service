@@ -1,7 +1,7 @@
 #include <trantor/utils/Date.h>
 #include <drogon/HttpFilter.h>
-#include "../helper/StatusCode.h"
 #include "../controllers/User.h"
+#include "../helper/StatusCode.h"
 
 using namespace drogon;
 
@@ -22,24 +22,18 @@ public:
                 FilterCallback &&cb,
                 FilterChainCallback &&ccb) override
   {
-    if (!req->session()->find(USER_DATA_SESSION))
+    auto user = req->session()->find(USER_DATA_SESSION);
+    if (!user)
     {
       Json::Value json;
       json["code"] = StatusCode::NOT_LOGGED_IN;
       json["message"] = "用户未登录，请先登录！";
       auto res = HttpResponse::newHttpJsonResponse(json);
       cb(res);
-      // auto u = req->session()->get<Json::Value>(USER_DATA_SESSION);
+      return;
+    }
 
-      // req->session()->modify<Json::Value>(USER_DATA_SESSION,
-      //                                     [now](Json::Value &vdate)
-      //                                     {
-      //                                       vdate["expire"] = now.after(60 * 60 * 24).toFormattedString(false);
-      //                                     });
-    }
-    else
-    {
-      ccb();
-    }
+    // todo: 查询数据库的权限字段
+    ccb();
   }
 };

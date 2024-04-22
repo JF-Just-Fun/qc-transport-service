@@ -100,9 +100,12 @@ class User : public drogon::HttpController<User>
 public:
   METHOD_LIST_BEGIN
   // METHOD_ADD宏会在路径映射中自动把名字空间和类名作为路径的前缀
-  ADD_METHOD_TO(User::login, "/user/login", Post, "SessionFilter");  // path is /usr/login
-  ADD_METHOD_TO(User::getInfo, "/user/info/{1}", Get); // path is /usr/info/{userId}
+  ADD_METHOD_TO(User::login, "/user/login", Post, "SessionFilter");     // path is /usr/login
+  ADD_METHOD_TO(User::getCurrentInfo, "/user/info", Get, "UserFilter"); // 获取本人信息
+  ADD_METHOD_TO(User::getInfo, "/user/info/{1}", Get);                  // 获取指定用户信息
   ADD_METHOD_TO(User::registry, "/user/registry", Post);
+  ADD_METHOD_TO(User::updateSelf, "/user/update", Post, "UserFilter"); // 更新本人信息
+  ADD_METHOD_TO(User::update, "/user/update/{1}", Post, "UserFilter"); // 更新指定用户的信息
   METHOD_LIST_END
 
   // your declaration of processing function maybe like this:
@@ -114,6 +117,34 @@ public:
                std::function<void(const HttpResponsePtr &)> &&callback,
                const std::string &uid) const;
 
+  void getCurrentInfo(const HttpRequestPtr &req,
+                      std::function<void(const HttpResponsePtr &)> &&callback) const;
+
   void registry(const UserRegistryData &&NewUser,
                 std::function<void(const HttpResponsePtr &)> &&callback) const;
+
+  void update(const UserRegistryData &&NewUser,
+              std::function<void(const HttpResponsePtr &)> &&callback,
+              const std::string &uid) const;
+
+  void updateSelf(const HttpRequestPtr &req,
+                  std::function<void(const HttpResponsePtr &)> &&callback,
+                  UserRegistryData &&NewUser) const;
+
+private:
+  Json::Value getUserFromSession(const HttpRequestPtr &req) const
+  {
+    Json::Value ret;
+
+    try
+    {
+      ret = req->session()->get<Json::Value>(USER_DATA_SESSION);
+    }
+    catch (...)
+    {
+      ret["data"] = Json::nullValue;
+    }
+
+    return ret;
+  };
 };

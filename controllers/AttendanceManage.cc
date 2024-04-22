@@ -34,6 +34,8 @@ namespace drogon
   template <>
   inline getAttendanceData fromRequest(const HttpRequest &req)
   {
+    std::cout << "session" << req.session()->get<Json::Value>("user_data_session") << std::endl;
+
     auto json = req.getJsonObject();
     auto cookie = req.getCookie("user");
     getAttendanceData data;

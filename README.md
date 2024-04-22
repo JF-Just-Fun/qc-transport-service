@@ -15,3 +15,16 @@ drogon_ctl create model ./models
 2: 访问频繁
 3: 权限不足
 4: 参数错误
+
+## 登录
+1. login
+输入name和password登录
+
+2. registry
+输入： `gender`, `name`, `email`, `password`, `telephone`进行注册
+
+3. info
+登录过之后会存session，可以直接获取用户信息
+
+4. info/:id
+查询指定id的用户信息

@@ -12,6 +12,6 @@ int main()
   drogon::app().loadConfigFile("../config.json");
   // Run HTTP framework,the method will block in the internal event loop
   cout << "service starting at " << PORT << endl;
-  drogon::app().enableSession(1200).run();
+  drogon::app().enableSession(60 * 60 * 24).run();
   return 0;
 }
