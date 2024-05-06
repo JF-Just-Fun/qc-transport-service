@@ -49,6 +49,7 @@ class Role
         static const std::string _create_time;
         static const std::string _uid;
         static const std::string _name;
+        static const std::string _level;
         static const std::string _description;
         static const std::string _validate;
     };
@@ -127,7 +128,6 @@ class Role
     ///Set the value of the column uid
     void setUid(const std::string &pUid) noexcept;
     void setUid(std::string &&pUid) noexcept;
-    void setUidToNull() noexcept;
 
     /**  For column name  */
     ///Get the value of the column name, returns the default value if the column is null
@@ -137,7 +137,14 @@ class Role
     ///Set the value of the column name
     void setName(const std::string &pName) noexcept;
     void setName(std::string &&pName) noexcept;
-    void setNameToNull() noexcept;
+
+    /**  For column level  */
+    ///Get the value of the column level, returns the default value if the column is null
+    const int32_t &getValueOfLevel() const noexcept;
+    ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
+    const std::shared_ptr<int32_t> &getLevel() const noexcept;
+    ///Set the value of the column level
+    void setLevel(const int32_t &pLevel) noexcept;
 
     /**  For column description  */
     ///Get the value of the column description, returns the default value if the column is null
@@ -159,7 +166,7 @@ class Role
     void setValidateToNull() noexcept;
 
 
-    static size_t getColumnNumber() noexcept {  return 6;  }
+    static size_t getColumnNumber() noexcept {  return 7;  }
     static const std::string &getColumnName(size_t index) noexcept(false);
 
     Json::Value toJson() const;
@@ -188,6 +195,7 @@ class Role
     std::shared_ptr<::trantor::Date> createTime_;
     std::shared_ptr<std::string> uid_;
     std::shared_ptr<std::string> name_;
+    std::shared_ptr<int32_t> level_;
     std::shared_ptr<std::string> description_;
     std::shared_ptr<int8_t> validate_;
     struct MetaData
@@ -201,7 +209,7 @@ class Role
         const bool notNull_;
     };
     static const std::vector<MetaData> metaData_;
-    bool dirtyFlag_[6]={ false };
+    bool dirtyFlag_[7]={ false };
   public:
     static const std::string &sqlForFindingByPrimaryKey()
     {
@@ -239,12 +247,17 @@ class Role
         }
         if(dirtyFlag_[4])
         {
+            sql += "level,";
+            ++parametersCount;
+        }
+        if(dirtyFlag_[5])
+        {
             sql += "description,";
             ++parametersCount;
         }
         sql += "validate,";
         ++parametersCount;
-        if(!dirtyFlag_[5])
+        if(!dirtyFlag_[6])
         {
             needSelection=true;
         }
@@ -283,6 +296,11 @@ class Role
 
         }
         if(dirtyFlag_[5])
+        {
+            sql.append("?,");
+
+        }
+        if(dirtyFlag_[6])
         {
             sql.append("?,");
 

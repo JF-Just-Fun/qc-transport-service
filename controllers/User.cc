@@ -150,30 +150,31 @@ void User::registry(const UserRegistryData &&NewUser,
 
 void User::updateSelf(const HttpRequestPtr &req,
                       std::function<void(const HttpResponsePtr &)> &&callback,
-                      UserRegistryData &&NewUser) const
+                      UserUpdateData &&NewUser) const
 {
-  auto self = this->getUserFromSession(req);
+  NewUser.id = this->getUserFromSession(req)["uid"].asString();
   Json::Value ret;
-  drogon_model::QC_SERVER_DB::User user;
-
-  user.setName(NewUser.name);
-  user.setPassword(NewUser.password);
-  user.setEmail(NewUser.email);
-  user.setPhone(NewUser.phone);
-  user.setGender(NewUser.gender);
-
   try
   {
     auto clientPtr = drogon::app().getDbClient();
     drogon::orm::Mapper<drogon_model::QC_SERVER_DB::User> mp(clientPtr);
 
-    auto s = mp.count();
-
-    auto u = mp.findOne(drogon::orm::Criteria(drogon_model::QC_SERVER_DB::User::Cols::_uid, drogon::orm::CompareOperator::EQ, self["uid"]));
+    auto u = mp.findOne(drogon::orm::Criteria(drogon_model::QC_SERVER_DB::User::Cols::_uid, drogon::orm::CompareOperator::EQ, NewUser.id));
 
     if (*u.getValidate())
     {
-      auto res = mp.update(user);
+      if (!NewUser.name.empty())
+        u.setName(NewUser.name);
+      if (!NewUser.password.empty())
+        u.setPassword(NewUser.password);
+      if (!NewUser.email.empty())
+        u.setEmail(NewUser.email);
+      if (!NewUser.phone.empty())
+        u.setPhone(NewUser.phone);
+      if (NewUser.gender >= 0)
+        u.setGender(NewUser.gender);
+
+      auto res = mp.update(u);
       if (res)
       {
 
@@ -184,7 +185,7 @@ void User::updateSelf(const HttpRequestPtr &req,
       {
 
         ret["code"] = StatusCode::FAIL;
-        ret["message"] = "update fail!";
+        ret["message"] = "没有数据更新！";
       }
     }
     else
@@ -204,19 +205,11 @@ void User::updateSelf(const HttpRequestPtr &req,
 
   callback(resp);
 }
-void User::update(const UserRegistryData &&NewUser,
+void User::update(const UserUpdateData &&NewUser,
                   std::function<void(const HttpResponsePtr &)> &&callback,
                   const std::string &uid) const
 {
   Json::Value ret;
-  drogon_model::QC_SERVER_DB::User user;
-
-  user.setName(NewUser.name);
-  user.setPassword(NewUser.password);
-  user.setEmail(NewUser.email);
-  user.setPhone(NewUser.phone);
-  user.setGender(NewUser.gender);
-
   try
   {
     auto clientPtr = drogon::app().getDbClient();
@@ -228,7 +221,18 @@ void User::update(const UserRegistryData &&NewUser,
 
     if (*u.getValidate())
     {
-      auto res = mp.update(user);
+      if (!NewUser.name.empty())
+        u.setName(NewUser.name);
+      if (!NewUser.password.empty())
+        u.setPassword(NewUser.password);
+      if (!NewUser.email.empty())
+        u.setEmail(NewUser.email);
+      if (!NewUser.phone.empty())
+        u.setPhone(NewUser.phone);
+      if (NewUser.gender >= 0)
+        u.setGender(NewUser.gender);
+
+      auto res = mp.update(u);
       if (res)
       {
 
@@ -239,7 +243,7 @@ void User::update(const UserRegistryData &&NewUser,
       {
 
         ret["code"] = StatusCode::FAIL;
-        ret["message"] = "update fail!";
+        ret["message"] = "没有数据更新！";
       }
     }
     else

@@ -13,6 +13,15 @@
 
 using namespace drogon;
 
+struct UserUpdateData
+{
+  std::string id;
+  std::string name;
+  std::string password;
+  std::string email;
+  int gender = -1;
+  std::string phone;
+};
 struct UserRegistryData
 {
   std::string name;
@@ -63,6 +72,31 @@ inline UserData toUserDataStruct(Json::Value &userInfo)
 namespace drogon
 {
   template <>
+  inline UserUpdateData fromRequest(const HttpRequest &req)
+  {
+    auto json = req.getJsonObject();
+    UserUpdateData user;
+
+    if (json)
+    {
+      if ((*json)["id"])
+        user.id = (*json)["id"].asString();
+      if ((*json)["name"])
+        user.name = (*json)["name"].asString();
+      if ((*json)["password"])
+        user.password = (*json)["password"].asString();
+      if ((*json)["gender"])
+        user.gender = (*json)["gender"].asInt();
+      if ((*json)["telephone"])
+        user.phone = (*json)["telephone"].asString();
+      if ((*json)["email"])
+        user.email = (*json)["email"].asString();
+    }
+
+    return user;
+  }
+
+  template <>
   inline UserRegistryData fromRequest(const HttpRequest &req)
   {
     auto json = req.getJsonObject();
@@ -100,9 +134,9 @@ class User : public drogon::HttpController<User>
 public:
   METHOD_LIST_BEGIN
   // METHOD_ADD宏会在路径映射中自动把名字空间和类名作为路径的前缀
-  ADD_METHOD_TO(User::login, "/user/login", Post, "SessionFilter");     // path is /usr/login
-  ADD_METHOD_TO(User::getCurrentInfo, "/user/info", Get, "UserFilter"); // 获取本人信息
-  ADD_METHOD_TO(User::getInfo, "/user/info/{1}", Get);                  // 获取指定用户信息
+  ADD_METHOD_TO(User::login, "/user/login", Post);                                       // path is /usr/login
+  ADD_METHOD_TO(User::getCurrentInfo, "/user/info", Get, "SessionFilter", "UserFilter"); // 获取本人信息
+  ADD_METHOD_TO(User::getInfo, "/user/info/{1}", Get, "SessionFilter");                  // 获取指定用户信息
   ADD_METHOD_TO(User::registry, "/user/registry", Post);
   ADD_METHOD_TO(User::updateSelf, "/user/update", Post, "UserFilter"); // 更新本人信息
   ADD_METHOD_TO(User::update, "/user/update/{1}", Post, "UserFilter"); // 更新指定用户的信息
@@ -123,13 +157,13 @@ public:
   void registry(const UserRegistryData &&NewUser,
                 std::function<void(const HttpResponsePtr &)> &&callback) const;
 
-  void update(const UserRegistryData &&NewUser,
+  void update(const UserUpdateData &&NewUser,
               std::function<void(const HttpResponsePtr &)> &&callback,
               const std::string &uid) const;
 
   void updateSelf(const HttpRequestPtr &req,
                   std::function<void(const HttpResponsePtr &)> &&callback,
-                  UserRegistryData &&NewUser) const;
+                  UserUpdateData &&NewUser) const;
 
 private:
   Json::Value getUserFromSession(const HttpRequestPtr &req) const
@@ -142,7 +176,7 @@ private:
     }
     catch (...)
     {
-      ret["data"] = Json::nullValue;
+      ret = Json::nullValue;
     }
 
     return ret;
