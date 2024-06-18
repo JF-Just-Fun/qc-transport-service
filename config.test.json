@@ -9,11 +9,11 @@
   "db_clients": [
     {
       "rdbms": "mysql",
-      "host": "127.0.0.1",
-      "port": 13306,
+      "host": "rm-uf6l175ad1gb42o1t.mysql.rds.aliyuncs.com",
+      "port": 3306,
       "dbname": "QC_SERVER_DB",
       "user": "root",
-      "passwd": "1234",
+      "passwd": "aA1!6785753",
       "is_fast": false,
       "client_encoding": "utf8",
       "number_of_connections": 1,
@@ -85,14 +85,14 @@
     },
     "log": {
       "use_spdlog": false,
-      "log_path": "./logs",
+      "log_path": "./",
       "logfile_base_name": "drogon-log",
       "log_size_limit": 100000000,
       "max_files": 0,
       "log_level": "DEBUG",
-      "display_local_time": false
+      "display_local_time": true
     },
-    "run_as_daemon": false,
+    "run_as_daemon": true,
     "handle_sig_term": true,
     "relaunch_on_error": true,
     "use_sendfile": true,
@@ -133,7 +133,6 @@
         "use_local_time": true,
         "log_index": 0,
         "show_microseconds": true,
-        "custom_time_format": "",
         "use_real_ip": true
       }
     }
