@@ -28,7 +28,7 @@ jobs:
           docker build -t qc-transport-service-app:latest .
           docker save qc-transport-service-app:latest -o qc-transport-service-app.tar
 
-      - name: deploy image via ssh key
+      - name: copy docker image into server
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -36,9 +36,9 @@ jobs:
           port: ${{ secrets.SERVER_SSH_PORT }}
           key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
           source: "./qc-transport-service-app.tar"
-          target: ${{ secrets.SERVER_ROOT }}
+          target: ${{ secrets.SERVER_DOCKER_IMAGES_PATH }}
 
-      - name: executing remote ssh commands using ssh key
+      - name: executing remote ssh commands to load docker image
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -46,5 +46,6 @@ jobs:
           key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
           port: ${{ secrets.SERVER_SSH_PORT }}
           script: |
+            cd ${{ secrets.SERVER_DOCKER_IMAGES_PATH }}
             docker load -i qc-transport-service-app.tar
             docker run -p 10947:5555 qc-transport-service-app
