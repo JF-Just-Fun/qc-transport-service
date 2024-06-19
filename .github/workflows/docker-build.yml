@@ -47,5 +47,6 @@ jobs:
           port: ${{ secrets.SERVER_SSH_PORT }}
           script: |
             cd ${{ secrets.SERVER_DOCKER_IMAGES_PATH }}
+            docker rmi -f qc-transport-service-app
             docker load -i qc-transport-service-app.tar
-            docker run -p 10947:5555 qc-transport-service-app
+            docker run -p 10947:10947 qc-transport-service-app
