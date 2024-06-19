@@ -6,7 +6,7 @@
 
 2. 使用cmake生成Makefile文件
 
-> 如果有问题，注意删除cmakeCache之类的文件。
+> 1. 如果构建有问题，注意删除cmakeCache之类的文件。
 
 ```bash
 mkdir -p build # 递归创建build文件夹

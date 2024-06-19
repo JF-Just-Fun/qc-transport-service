@@ -5,11 +5,9 @@ WORKDIR /app
 COPY . .
 
 # 创建 build 目录并运行 cmake 和 make
-RUN mkdir -p build \
-    && cd build \
-    && cmake .. \
-    && make
+RUN cmake .
+RUN make
 
-EXPOSE 5555
+EXPOSE 10947
 
-CMD ["./build/qc-transport-service"]
+CMD ["./qc-transport-service"]
