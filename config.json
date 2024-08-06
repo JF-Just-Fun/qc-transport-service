@@ -19,7 +19,7 @@
       "dbname": "qc_service_db",
       //user: 'postgres' by default
       "user": "root",
-      "passwd": "1234",
+      "passwd": "aA1!6785753",
       "is_fast": false,
       "client_encoding": "utf8",
       "number_of_connections": 1,
@@ -89,15 +89,15 @@
       "precision": 0,
       "precision_type": "significant"
     },
-    "log": {
-      "use_spdlog": false,
-      "log_path": "./logs",
-      "logfile_base_name": "drogon-log",
-      "log_size_limit": 100000000,
-      "max_files": 0,
-      "log_level": "DEBUG",
-      "display_local_time": false
-    },
+    // "log": {
+    //   "use_spdlog": false,
+    //   "log_path": "./logs",
+    //   "logfile_base_name": "drogon-log",
+    //   "log_size_limit": 100000000,
+    //   "max_files": 0,
+    //   "log_level": "DEBUG",
+    //   "display_local_time": false
+    // },
     "run_as_daemon": false,
     "handle_sig_term": true,
     "relaunch_on_error": true,
