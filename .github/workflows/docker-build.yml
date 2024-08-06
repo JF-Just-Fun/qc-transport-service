@@ -46,15 +46,11 @@ jobs:
           key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
           port: ${{ secrets.SERVER_SSH_PORT }}
           script: |
-            docker rm $(docker ps -a --filter "ancestor=qc-transport-service" -q)
-            images=$(docker images -a | grep qc-transport-servic | awk '{print $3}') && \
-            if [ -n "$images" ]; then \
-              echo $images | xargs docker rmi -f; \
-            else \
-              echo "No images found for qc-transport-service"; \
-            fi
-
             cd ${{ secrets.SERVER_DOCKER_IMAGES_PATH }}
+            docker container rm -f qc-transport-service-container || true
+            docker rmi -f qc-transport-service:old || true
+            docker tag qc-transport-service:latest qc-transport-service:old || true
+            docker rmi -f qc-transport-service:latest || true
+
             docker load -i qc-transport-service
-            docker stop qc-transport-service-container
             docker run -d --network host --name qc-transport-service-container qc-transport-service
