@@ -1,5 +1,15 @@
 # service
 
+## 使用cmake构建代码
+```shell
+cmake -B build -S . # -B 指定生成目录 -S 指定源码目录
+```
+
+## 使用cmake构建代码
+```shell
+cmake -B build -S . # -B 指定生成目录 -S 指定源码目录
+```
+
 ## development
 
 1. 下载依赖

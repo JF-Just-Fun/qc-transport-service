@@ -25,8 +25,8 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t qc-transport-service-app:latest .
-          docker save qc-transport-service-app:latest -o qc-transport-service-app.tar
+          docker build -t qc-transport-service:latest .
+          docker save qc-transport-service:latest -o qc-transport-service
 
       - name: copy docker image into server
         uses: appleboy/scp-action@v0.1.4
@@ -35,7 +35,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           port: ${{ secrets.SERVER_SSH_PORT }}
           key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
-          source: "./qc-transport-service-app.tar"
+          source: "./qc-transport-service"
           target: ${{ secrets.SERVER_DOCKER_IMAGES_PATH }}
 
       - name: executing remote ssh commands to load docker image
@@ -46,14 +46,15 @@ jobs:
           key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
           port: ${{ secrets.SERVER_SSH_PORT }}
           script: |
-            docker rm $(docker ps -a --filter "ancestor=qc-transport-service-app" -q)
-            images=$(docker images -a | grep qc-transport-service-app | awk '{print $3}') && \
+            docker rm $(docker ps -a --filter "ancestor=qc-transport-service" -q)
+            images=$(docker images -a | grep qc-transport-servic | awk '{print $3}') && \
             if [ -n "$images" ]; then \
               echo $images | xargs docker rmi -f; \
             else \
-              echo "No images found for qc-transport-service-app"; \
+              echo "No images found for qc-transport-service"; \
             fi
 
             cd ${{ secrets.SERVER_DOCKER_IMAGES_PATH }}
-            docker load -i qc-transport-service-app.tar
-            docker run -p 10947:10947 qc-transport-service-app
+            docker load -i qc-transport-service
+            docker stop qc-transport-service-container
+            docker run -p 5555:5555 --name qc-transport-service-container qc-transport-service

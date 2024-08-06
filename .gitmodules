@@ -1,3 +1,4 @@
 [submodule "drogon"]
-	path = drogon
-	url = https://github.com/drogonframework/drogon
+  path = drogon
+  url = https://github.com/drogonframework/drogon
+  branch = master

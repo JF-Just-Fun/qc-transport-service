@@ -1,13 +1,16 @@
 FROM drogonframework/drogon:latest
 
+RUN sudo apt-get install libjsoncpp-dev && sudo ln -s /usr/include/jsoncpp/json/ /usr/include/json
+
+COPY . /app
+
 WORKDIR /app
 
-COPY . .
+EXPOSE 5555
 
-# 创建 build 目录并运行 cmake 和 make
-RUN cmake .
-RUN make
+RUN mkdir build && \
+    cd build && \
+    cmake ..  && \
+    make
 
-EXPOSE 10947
-
-CMD ["./qc-transport-service"]
+CMD [ "/app/build/qc-transport-service" ]
