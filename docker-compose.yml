@@ -2,28 +2,29 @@ version: '3.7'
 
 services:
   drogon:
-    image: ${DOCKER_IMAGE_NAME}:latest
+    # image: ${DOCKER_IMAGE_NAME}:latest
+    build: .
     ports:
       - ${DROGON_PORT}:5555
     command: /app/build/qc-transport-service
 
-  # db_mysql:
-  #   image: mysql:8.0.31
-  #   container_name: mysql8
-  #   restart: always
-  #   environment:
-  #     MYSQL_DATABASE: ${MYSQL_DATABASE}
-  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-  #   ports:
-  #     - ${MYSQL_PORT}:3306
-  #   command: --character-set-server=utf8mb4
-  #     --collation-server=utf8mb4_general_ci
-  #     --explicit_defaults_for_timestamp=true
-  #   volumes:
-  #     - ${MYSQL_VOLUMES_DATA}:/var/lib/mysql
-  #     - ./database/tables.sql:/docker-entrypoint-initdb.d/init.sql
-  #   networks:
-  #     - mysql
+  db_mysql:
+    image: mysql:8.0.31
+    container_name: mysql8
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - ${MYSQL_PORT}:3306
+    command: --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --explicit_defaults_for_timestamp=true
+    volumes:
+      - ${MYSQL_VOLUMES_DATA}:/var/lib/mysql
+      - ./database/tables.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - mysql
 
   # db_redis:
   #   image: redis:7
@@ -37,6 +38,6 @@ services:
   #   networks:
   #     - redis
 
-# networks:
-#   redis:
-#   mysql:
+networks:
+  # redis:
+  mysql:

@@ -57,4 +57,4 @@ jobs:
             cd ${{ secrets.SERVER_DOCKER_IMAGES_PATH }}
             docker load -i qc-transport-service
             docker stop qc-transport-service-container
-            docker run -p 5555:5555 --name qc-transport-service-container qc-transport-service
+            docker run -d --network host --name qc-transport-service-container qc-transport-service
